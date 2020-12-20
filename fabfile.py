@@ -22,3 +22,36 @@ def transfer(ctx,file="",targetdir=""):
         print("elééérrtt")
         result = c.put(file, targetdir)
         print(result)
+
+@task(name="runlocal")
+def runlocal(ctx):
+    ctx.run("node /home/sasa/data1/TDKCaseStudy/DigitalTwinController/generated/sensepi/AllReader.js")
+
+@task(name="stoplocal")
+def stoplocal(ctx):
+    output = ctx.run("ps -ef | grep node | awk '{print $2" "$9}'")
+    # print(output)
+    output_stdout = output.stdout.split("\r\n")
+    nodetasks = output_stdout[0].split('\n')
+    for task in nodetasks:
+        print("Task:"+task)
+        if ("AllReader.js" in task):
+            print("PID"+task.split('/')[0])
+            ctx.run("kill " + task.split('/')[0])
+
+@task(name="runremote")
+def runremote(ctx,targetdir=""):
+    with c:
+        c.run("python3 /home/pi/generated/DeviceWriter.py")
+
+@task(name="stopremote")
+def stopremote(ctx):
+    with c:
+        output = c.run("ps -ef | grep python3 | awk '{print $2" "$9}'")
+        #print(output)
+        output_stdout = output.stdout.split("\r\n")
+        pythontasks = output_stdout[0].split('\n')
+        for task in pythontasks:
+            if("DeviceWriter.py" in task):
+                print(task)
+                c.run("sudo kill "+task.split('/')[0])

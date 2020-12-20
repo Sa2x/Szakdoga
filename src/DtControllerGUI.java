@@ -33,6 +33,7 @@ public class DtControllerGUI extends JFrame implements ActionListener {
 
     private JButton generateButton;
 
+    private JButton stopButton;
 
     private JButton checkSSHCOnnection;
 
@@ -72,6 +73,7 @@ public class DtControllerGUI extends JFrame implements ActionListener {
         generateButton = new JButton("Generate DT");
         checkSSHCOnnection = new JButton("Check SSH connection");
         deployButton = new JButton("Deploy DT ");
+        stopButton = new JButton("Stop running");
 
         removeButton.setEnabled(false);
         viewDataButton.setEnabled(false);
@@ -91,6 +93,8 @@ public class DtControllerGUI extends JFrame implements ActionListener {
         checkSSHCOnnection.setActionCommand("ssh");
         deployButton.addActionListener(this);
         deployButton.setActionCommand("deploy");
+        stopButton.addActionListener(this);
+        stopButton.setActionCommand("stoprunning");
 
         controlPanel.setLayout(new GridLayout(0, 1, 0, 5));
         controlPanel.add(addButton);
@@ -99,6 +103,7 @@ public class DtControllerGUI extends JFrame implements ActionListener {
         controlPanel.add(generateButton);
         controlPanel.add(checkSSHCOnnection);
         controlPanel.add(deployButton);
+        controlPanel.add(stopButton);
 
         this.add(controlPanel, BorderLayout.CENTER);
         validate();
@@ -509,6 +514,8 @@ public class DtControllerGUI extends JFrame implements ActionListener {
                 validate();
                 repaint();
                 break;
+            case "stoprunning":
+                controller.stopprocess();
         }
     }
 
@@ -532,12 +539,41 @@ public class DtControllerGUI extends JFrame implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 controller.deploy(controller.getDevices().get(getSelected()).getDevname(),targetdirtf.getText());
-
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.gridx=0;
+                gbc.gridy=2;
+                JButton runBtn = new JButton("Run");
+                deployPanel.add(runBtn,gbc);
+                runBtn.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent actionEvent) {
+                        controller.run();
+                        frame.remove(deployPanel);
+                        frame.add(controlPanel);
+                        repaint();
+                        revalidate();
+                    }
+                });
+                deployPanel.revalidate();
+                deployPanel.repaint();
+            }
+        });
+        JButton cancelBtn = new JButton("Cancel");
+        cancelBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                frame.remove(deployPanel);
+                frame.add(controlPanel);
+                repaint();
+                revalidate();
             }
         });
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx=0;
         gbc.gridy=0;
+        deployPanel.add(cancelBtn,gbc);
+        gbc.gridx=0;
+        gbc.gridy=1;
         deployPanel.add(filesettingsPanel,gbc);
 
     }

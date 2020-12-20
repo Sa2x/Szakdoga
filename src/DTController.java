@@ -222,7 +222,6 @@ public class DTController {
     }
 
     public void deploy(String devicename,String targetdir){
-        //String command = "fab2 transfer --file /home/sasa/data1/TDKCaseStudy/DigitalTwinController/generated/"+devicename+"/DeviceWriter.py --targetdir "+targetdir;
         String command1 = "fab2 transfer --file /home/sasa/data1/TDKCaseStudy/DigitalTwinController/generated/"+devicename+"/DeviceWriter.py --targetdir "+targetdir;
         ProcessBuilder pb = new ProcessBuilder(command1.split(" "));
         String command2 = "fab2 transfer --file /home/sasa/data1/TDKCaseStudy/DigitalTwinController/generated/"+devicename+"/Every.xml --targetdir "+targetdir;
@@ -233,7 +232,6 @@ public class DTController {
             String line;
             System.out.println("itt vagyok");
             while ((line = bfr.readLine()) != null) {
-
                 System.out.println(line);
             }
             int code = p.waitFor();
@@ -267,5 +265,29 @@ public class DTController {
 
     public TableModel getTableModel() {
         return model;
+    }
+
+    public void run() {
+        ProcessBuilder pb = new ProcessBuilder("fab2","runlocal");
+        ProcessBuilder pb1 = new ProcessBuilder("fab2","runremote");
+        try{
+            Process p = pb.start();
+            Process p2 = pb1.start();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void stopprocess() {
+        ProcessBuilder pb = new ProcessBuilder("fab2","stoplocal");
+        ProcessBuilder pb1 = new ProcessBuilder("fab2","stopremote");
+        try{
+            Process p = pb.start();
+            Process p2 = pb1.start();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }
 }
