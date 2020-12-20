@@ -41,7 +41,7 @@ public class DataPanel extends JPanel{
                 frame.repaint();
             }
         });
-
+        System.out.println("thingId" + controller.getDevices().get(frame.getSelected()).getDtwin().getThingID());
         JPanel dataPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbcdata = new GridBagConstraints();
         int y = 0;

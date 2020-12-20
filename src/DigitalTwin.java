@@ -11,6 +11,8 @@ public class DigitalTwin implements Serializable {
 
     private Map<String, String> datas;
 
+    private boolean running = false;
+
     public DigitalTwin(String _namespace, String _name,Map<String, String> _datas){
         this.namespace = _namespace;
         this.name = _name;
@@ -49,4 +51,11 @@ public class DigitalTwin implements Serializable {
         this.namespace = namespace;
     }
 
+    public void setRunning(boolean running) {
+        this.running = running;
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
 }

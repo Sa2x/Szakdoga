@@ -18,7 +18,7 @@ public class DeviceTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return 4;
+        return 6;
     }
 
     @Override
@@ -30,8 +30,12 @@ public class DeviceTableModel extends AbstractTableModel {
                 return "Device IP";
             case 2:
                 return "Device hostname";
-            default:
+            case 3:
                 return "Device password";
+            case 4:
+                return "Thing ID";
+            default:
+                return "Digital Twin State";
         }
         }
     @Override
@@ -44,9 +48,12 @@ public class DeviceTableModel extends AbstractTableModel {
                 return d.getIpaddress();
             case 2:
                 return d.getHostname();
-            default:
+            case 3:
                 return d.getPassword();
-
+            case 4:
+                return  d.getDtwin() == null ? "No Digital Twin":d.getDtwin().getThingID();
+            default:
+                return d.getDtwin() == null ? "No digital Twin" : d.getDtwin().isRunning() ? "Running" : "Not running" ;
         }
     }
 

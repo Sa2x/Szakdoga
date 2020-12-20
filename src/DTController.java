@@ -156,7 +156,7 @@ public class DTController {
         return ret;
     }
 
-    public void generate(ArrayList<String> sendables,int selected){
+    public void generate(ArrayList<String> sendables, int selected, String text){
         String path = "/home/sasa/data1/TDKCaseStudy/DigitalTwinController/genFromDSL-generate.py";
         String[] commandlist = {"python3",path};
         Device d = devices.get(selected);
@@ -164,8 +164,10 @@ public class DTController {
         sending.add("python3");
         sending.add(path);
         sending.add(d.getDtwin().getThingID());
-        sending.add(d.getDtwin().getName());
+        //sending.add(d.getDtwin().getName());
+        sending.add(d.getDevname());
         sending.add(d.getDtwin().getNamespace());
+        sending.add(text);
         for(String s:sendables){
             sending.add(s);
         }
@@ -217,6 +219,39 @@ public class DTController {
         }
 
         return returndata;
+    }
+
+    public void deploy(String devicename,String targetdir){
+        //String command = "fab2 transfer --file /home/sasa/data1/TDKCaseStudy/DigitalTwinController/generated/"+devicename+"/DeviceWriter.py --targetdir "+targetdir;
+        String command1 = "fab2 transfer --file /home/sasa/data1/TDKCaseStudy/DigitalTwinController/generated/"+devicename+"/DeviceWriter.py --targetdir "+targetdir;
+        ProcessBuilder pb = new ProcessBuilder(command1.split(" "));
+        String command2 = "fab2 transfer --file /home/sasa/data1/TDKCaseStudy/DigitalTwinController/generated/"+devicename+"/Every.xml --targetdir "+targetdir;
+        ProcessBuilder pb2 = new ProcessBuilder(command2.split(" "));
+        try{
+            Process p = pb.start();
+            BufferedReader bfr = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String line;
+            System.out.println("itt vagyok");
+            while ((line = bfr.readLine()) != null) {
+
+                System.out.println(line);
+            }
+            int code = p.waitFor();
+            System.out.println(code);
+            p = pb2.start();
+            bfr = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while ((line = bfr.readLine()) != null) {
+
+                System.out.println(line);
+            }
+            int code1 = p.waitFor();
+
+        }
+        catch (Exception e ){
+            e.printStackTrace();
+        }
+
+
     }
     public ArrayList<Device> getDevices() {
         return devices;

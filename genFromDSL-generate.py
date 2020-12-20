@@ -413,7 +413,7 @@ with rti.open_connector(
     file.write(code1 + code2 + code3 + code4)
     file.close()
 
-def genDeviceWriter(dat,devicechoice):
+def genDeviceWriter(dat,devicechoice,targetdir):
     devices = {"SenseHat": {"Humidity": "sense.get_humidity()", "Temperature": "sense.get_temperature()",
                             "Pressure": "sense.get_pressure()"}}
     path = os.getcwd()
@@ -428,11 +428,9 @@ file_path = os_path.dirname(os_path.realpath(__file__))
 sys_path.append(file_path + "/../../../")
 import rticonnextdds_connector as rti
 with rti.open_connector(
-            config_name="MyParticipantLibrary::MyPubParticipant",
-            url=file_path +"/''' + "Every.xml" + '''" ) as connector:
-            
-    while True:'''
+            config_name="MyParticipantLibrary::MyPubParticipant",'''+'\n        url="'+targetdir+'/Every.xml") as connector:\n    while True:'
     code2 = "\n"
+
     count = 0
     for key in dat[2]:
         code2 = code2 + '''        ''' + key + " ="+devices[devicechoice[count]][devicechoice[count+1]]+ "\n"
@@ -443,7 +441,11 @@ with rti.open_connector(
             '''
     code4 = "\n"
     for key in dat[2]:
-        code4 = code4 + '''        output.instance.set_string("''' + key + '''",''' + key + ")\n"
+        if(dat[2][key] == "string"):
+            type = "string"
+        else:
+            type = "number"
+        code4 = code4 + "        output.instance.set_"+ type+'''("''' + key + '''",''' + key + ")\n"
         #    output.write()
         #    output.wait() # Wait for all subscriptions to receive the data before exiting'''
     code4 = code4 + '''        output.write()
@@ -460,8 +462,11 @@ def generate():
     name = data[2]
     namespace = data[3]
     thingid = data[1]
+    targetdir = data[4]
+
     functiontodata = {}
 
+    del (data[0])
     del (data[0])
     del (data[0])
     del (data[0])
@@ -507,6 +512,6 @@ def generate():
     genXML(datavars)
     genReaderAndDitto(datavars,thingid,realfunctiontodata)
     genMockWriter(datavars)
-    genDeviceWriter(datavars,devicechoices)
+    genDeviceWriter(datavars,devicechoices,targetdir)
 
 generate()
