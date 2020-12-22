@@ -32,6 +32,8 @@ public class DTController {
 
             deviceinput.close();
             devicefile.close();
+        } catch (EOFException x){
+            System.out.println("üres a fájl");
         } catch (IOException e) {
             e.printStackTrace();
         }
