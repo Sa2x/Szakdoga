@@ -1,8 +1,7 @@
-import org.w3c.dom.events.MouseEvent;
+
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
 
 public class DeviceTablePanel extends JPanel {
     private DtControllerGUI frame;
@@ -20,8 +19,8 @@ public class DeviceTablePanel extends JPanel {
 
     public DeviceTablePanel(DtControllerGUI gui) {
         this.setLayout(new BorderLayout());
-        this.frame =gui;
-        this.setLayout(new BorderLayout(5,5));
+        this.frame = gui;
+        this.setLayout(new BorderLayout(5, 5));
         addButton = new JButton("Add new device");
         addButton.setEnabled(true);
 
@@ -38,20 +37,20 @@ public class DeviceTablePanel extends JPanel {
         table = new JTable();
         table.setFillsViewportHeight(true);
         table.setModel(model);
-        table.addMouseListener(new java.awt.event.MouseAdapter(){
+        table.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
-            public void mouseClicked(java.awt.event.MouseEvent evt){
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 int row = table.rowAtPoint(evt.getPoint());
 
             }
         });
         JScrollPane pane = new JScrollPane(table);
 
-        this.add(pane,BorderLayout.NORTH);
-        this.add(addButton,BorderLayout.SOUTH);
-        this.add(removeButton,BorderLayout.SOUTH);
-        this.add(viewDataButton,BorderLayout.SOUTH);
-        this.add(generateAndDeployButton,BorderLayout.SOUTH);
+        this.add(pane, BorderLayout.NORTH);
+        this.add(addButton, BorderLayout.SOUTH);
+        this.add(removeButton, BorderLayout.SOUTH);
+        this.add(viewDataButton, BorderLayout.SOUTH);
+        this.add(generateAndDeployButton, BorderLayout.SOUTH);
 
     }
 }

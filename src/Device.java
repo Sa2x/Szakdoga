@@ -31,7 +31,7 @@ public class Device implements Serializable {
         return ipaddress;
     }
 
-    public String getDevname(){
+    public String getDevname() {
         return devname;
     }
 
@@ -39,7 +39,7 @@ public class Device implements Serializable {
         return hostname;
     }
 
-    public String getPassword(){
+    public String getPassword() {
         return password;
     }
 

@@ -13,7 +13,7 @@ public class DigitalTwin implements Serializable {
 
     private boolean running = false;
 
-    public DigitalTwin(String _namespace, String _name,Map<String, String> _datas){
+    public DigitalTwin(String _namespace, String _name, Map<String, String> _datas) {
         this.namespace = _namespace;
         this.name = _name;
         this.datas = _datas;

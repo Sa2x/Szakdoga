@@ -1,4 +1,3 @@
-import javax.naming.directory.DirContext;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
@@ -42,17 +41,14 @@ public class DtControllerGUI extends JFrame implements ActionListener {
     private JTable table;
 
     private JFrame frame = this;
-    //private DeviceTableModel model;
 
     private String filepath = "";
 
     public DtControllerGUI() {
-        //model = new DeviceTableModel(controller.getDevices());
         setSize(1000, 500);
         setResizable(false);
         setVisible(true);
         setTitle("Digital Twin Controller");
-        //this.add(new DeviceTablePanel(this));
         this.setLayout(new BorderLayout());
         initDevicePanel();
         initControlPanel();
@@ -64,8 +60,9 @@ public class DtControllerGUI extends JFrame implements ActionListener {
             }
         });
     }
-    public void setButtons(){
-        if(selected == -1) {
+
+    public void setButtons() {
+        if (selected == -1) {
             addButton.setEnabled(true);
             removeButton.setEnabled(false);
             viewDataButton.setEnabled(false);
@@ -73,8 +70,7 @@ public class DtControllerGUI extends JFrame implements ActionListener {
             checkSSHCOnnection.setEnabled(false);
             deployButton.setEnabled(false);
             stopButton.setEnabled(false);
-        }
-        else if(controller.getDevices().get(selected).getDtwin() == null){
+        } else if (controller.getDevices().get(selected).getDtwin() == null) {
             addButton.setEnabled(false);
             removeButton.setEnabled(true);
             viewDataButton.setEnabled(false);
@@ -82,18 +78,16 @@ public class DtControllerGUI extends JFrame implements ActionListener {
             checkSSHCOnnection.setEnabled(true);
             deployButton.setEnabled(false);
             stopButton.setEnabled(false);
-        }
-        else {
+        } else {
             addButton.setEnabled(false);
             removeButton.setEnabled(true);
             generateButton.setEnabled(false);
             checkSSHCOnnection.setEnabled(true);
-            if(!controller.getDevices().get(selected).getDtwin().isRunning()){
+            if (!controller.getDevices().get(selected).getDtwin().isRunning()) {
                 viewDataButton.setEnabled(false);
                 deployButton.setEnabled(true);
                 stopButton.setEnabled(false);
-            }
-            else{
+            } else {
                 viewDataButton.setEnabled(true);
                 deployButton.setEnabled(false);
                 stopButton.setEnabled(true);
@@ -101,6 +95,7 @@ public class DtControllerGUI extends JFrame implements ActionListener {
 
         }
     }
+
     public void initControlPanel() {
         controlPanel = new JPanel();
         addButton = new JButton("Add device");
@@ -146,29 +141,15 @@ public class DtControllerGUI extends JFrame implements ActionListener {
         devicePanel = new JPanel();
         table = new JTable(controller.getTableModel());
         JScrollPane tablepane = new JScrollPane(table);
-        selected=-1;
-/*        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent listSelectionEvent) {
-                    removeButton.setEnabled(true);
-                    viewDataButton.setEnabled(true);
-                    generateButton.setEnabled(true);
-                    checkSSHCOnnection.setEnabled(true);
-            }
-        });*/
+        selected = -1;
+
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
                 int row = table.rowAtPoint(evt.getPoint());
-                int col = table.columnAtPoint(evt.getPoint());
                 if (row >= 0) {
-/*                    removeButton.setEnabled(true);
-                    //viewDataButton.setEnabled(true);
-                    generateButton.setEnabled(true);
-                    checkSSHCOnnection.setEnabled(true);*/
                     selected = row;
                     setButtons();
-                    System.out.println(selected);
                 }
             }
         });
@@ -176,18 +157,10 @@ public class DtControllerGUI extends JFrame implements ActionListener {
             @Override
             public void mouseClicked(MouseEvent evt) {
                 int row = table.rowAtPoint(evt.getPoint());
-                int col = table.columnAtPoint(evt.getPoint());
-                System.out.println(row);
                 if (row < 0) {
                     table.clearSelection();
-/*                    removeButton.setEnabled(false);
-                    viewDataButton.setEnabled(false);
-                    generateButton.setEnabled(false);
-                    checkSSHCOnnection.setEnabled(false);
-                    deployButton.setEnabled(false);*/
                     selected = -1;
                     setButtons();
-                    System.out.println(selected);
                 }
 
             }
@@ -231,7 +204,6 @@ public class DtControllerGUI extends JFrame implements ActionListener {
                 if (nametf.getText().length() != 0 && iptf.getText().length() != 0 && hosttf.getText().length() != 0 && passtf.getText().length() != 0) {
                     Matcher matcher = IPv4_PATTERN.matcher(iptf.getText());
                     if (matcher.matches()) {
-                        //model.addDevice(new Device(nametf.getText(),iptf.getText(),hosttf.getText(),passtf.getText()));
                         controller.addDevice(new Device(nametf.getText(), iptf.getText(), hosttf.getText(), passtf.getText()));
                         frame.remove(addPanel);
                         frame.add(controlPanel);
@@ -239,7 +211,6 @@ public class DtControllerGUI extends JFrame implements ActionListener {
                         validate();
                         repaint();
                     } else {
-                        System.out.println("Ip address is not good");
                         JOptionPane.showMessageDialog(frame,
                                 "Ip address is not valid",
                                 "Error",
@@ -271,7 +242,7 @@ public class DtControllerGUI extends JFrame implements ActionListener {
     public void initgeneratePanel() {
         generatePanel = new JPanel(new GridBagLayout());
         JPanel defaultpanel = new JPanel();
-        defaultpanel.setLayout(new BoxLayout(defaultpanel,BoxLayout.Y_AXIS));
+        defaultpanel.setLayout(new BoxLayout(defaultpanel, BoxLayout.Y_AXIS));
         ArrayList<JComboBox> comboBoxes = new ArrayList<>();
         JLabel addzip = new JLabel("Add an information model in zip format");
         JButton startgenerate = new JButton("Start preprocessing");
@@ -291,8 +262,8 @@ public class DtControllerGUI extends JFrame implements ActionListener {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.NORTHWEST ;
-        generatePanel.add(cancel,gbc);
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        generatePanel.add(cancel, gbc);
         JButton choosefile = new JButton("Choose zip");
         JLabel chosenfile = new JLabel("No data has been choosen");
         choosefile.addActionListener(new ActionListener() {
@@ -307,26 +278,23 @@ public class DtControllerGUI extends JFrame implements ActionListener {
 
                     filepath = chooser.getSelectedFile().getAbsolutePath();
                     chosenfile.setText(chooser.getSelectedFile().toString());
-                    //filepath="/home/sasa/data1/TDKCaseStudy/com.incquery_MeArm_1.0.0.zip";
                     startgenerate.setEnabled(true);
                 }
 
             }
         });
-/*        generatePanel.add(addzip);
-        generatePanel.add(choosefile);
-        generatePanel.add(startgenerate);*/
+
 
         startgenerate.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                ArrayList<Map<String,String>> datamaps= controller.preprocess(filepath,selected);
-                Map<String,String> datas = datamaps.get(0);
+                ArrayList<Map<String, String>> datamaps = controller.preprocess(filepath, selected);
+                Map<String, String> datas = datamaps.get(0);
                 Map<String, String> functiontodata = datamaps.get(1);
 
                 final int[] i = {6};
                 JPanel ThingPanel = new JPanel();
-                ThingPanel.setLayout(new BoxLayout(ThingPanel,BoxLayout.X_AXIS));
+                ThingPanel.setLayout(new BoxLayout(ThingPanel, BoxLayout.X_AXIS));
                 JLabel thinglabel = new JLabel("thingID: ");
                 JTextField thingidtf = new JTextField(20);
                 ThingPanel.add(thinglabel);
@@ -335,49 +303,44 @@ public class DtControllerGUI extends JFrame implements ActionListener {
                 gbc2.gridx = 0;
                 gbc2.gridy = 4;
                 gbc2.anchor = GridBagConstraints.NORTHWEST;
-                generatePanel.add(ThingPanel,gbc2);
+                generatePanel.add(ThingPanel, gbc2);
                 JPanel DirPanel = new JPanel();
-                DirPanel.setLayout(new BoxLayout(DirPanel,BoxLayout.X_AXIS));
+                DirPanel.setLayout(new BoxLayout(DirPanel, BoxLayout.X_AXIS));
                 JLabel dirlabel = new JLabel("Target dir: ");
                 JTextField dirtf = new JTextField(20);
                 DirPanel.add(dirlabel);
                 DirPanel.add(dirtf);
                 gbc2.gridx = 0;
                 gbc2.gridy = 5;
-                generatePanel.add(DirPanel,gbc2);
-                datas.forEach((key, value)->{
+                generatePanel.add(DirPanel, gbc2);
+                datas.forEach((key, value) -> {
 
-                    System.out.println(key + " "+value);
                     JPanel datachooserpanel = new JPanel();
-                    datachooserpanel.setLayout(new BoxLayout(datachooserpanel,BoxLayout.X_AXIS));
+                    datachooserpanel.setLayout(new BoxLayout(datachooserpanel, BoxLayout.X_AXIS));
                     GridBagConstraints gbc = new GridBagConstraints();
                     gbc.gridx = 0;
                     gbc.gridy = i[0];
                     gbc.anchor = GridBagConstraints.NORTHWEST;
-                    System.out.println(i[0]);
                     JLabel dataname = new JLabel(key);
                     datachooserpanel.add(dataname);
 
-                    String[] boards = new String[]{"","SenseHat"};
+                    String[] boards = new String[]{"", "SenseHat"};
 
                     JComboBox boardsbox = new JComboBox(boards);
                     boardsbox.setBorder(BorderFactory.createTitledBorder("Board Type"));
                     comboBoxes.add(boardsbox);
                     datachooserpanel.add(boardsbox);
 
-                    String[] sensors = new String[]{"","Temperature","Pressure","Humidity"};
+                    String[] sensors = new String[]{"", "Temperature", "Pressure", "Humidity"};
                     JComboBox sensorbox = new JComboBox(sensors);
                     sensorbox.setBorder(BorderFactory.createTitledBorder("Sensor Type"));
                     comboBoxes.add(sensorbox);
                     datachooserpanel.add(sensorbox);
 
-/*                    generatePanel.add(dataname,gbc);
-                    gbc.gridx = 1;
-                    generatePanel.add(new JComboBox<>(),gbc);*/
-                    generatePanel.add(datachooserpanel,gbc);
+                    generatePanel.add(datachooserpanel, gbc);
                     generatePanel.revalidate();
                     generatePanel.repaint();
-                    i[0] = i[0] +1;
+                    i[0] = i[0] + 1;
 
                 });
                 startgenerate.setEnabled(false);
@@ -390,25 +353,22 @@ public class DtControllerGUI extends JFrame implements ActionListener {
                 generate.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent actionEvent) {
-                        final int[] index ={0};
+                        final int[] index = {0};
                         ArrayList<String> sendables = new ArrayList<>();
-                        for(String s:functiontodata.keySet()){
-                            sendables.add(s+"->"+functiontodata.get(s));
+                        for (String s : functiontodata.keySet()) {
+                            sendables.add(s + "->" + functiontodata.get(s));
                         }
-                        datas.forEach((key,value)->{
+                        datas.forEach((key, value) -> {
                             sendables.add(key);
                             sendables.add(value);
-                            sendables.add(comboBoxes.get(2*index[0]+0).getSelectedItem().toString());
-                            sendables.add(comboBoxes.get(2*index[0]+1).getSelectedItem().toString());
+                            sendables.add(comboBoxes.get(2 * index[0] + 0).getSelectedItem().toString());
+                            sendables.add(comboBoxes.get(2 * index[0] + 1).getSelectedItem().toString());
                             index[0]++;
                         });
-                        for(String s:sendables){
-                            System.out.println(s);
-                        }
 
                         controller.getDevices().get(selected).getDtwin().setThingID(thingidtf.getText());
                         controller.getDevices().get(selected).getDtwin().setRunning(false);
-                        controller.generate(sendables,selected,dirtf.getText());
+                        controller.generate(sendables, selected, dirtf.getText());
                         add(controlPanel, BorderLayout.CENTER);
                         remove(generatePanel);
                         setButtons();
@@ -418,7 +378,7 @@ public class DtControllerGUI extends JFrame implements ActionListener {
                     }
 
                 });
-                generatePanel.add(generate,gbc);
+                generatePanel.add(generate, gbc);
                 generatePanel.revalidate();
                 generatePanel.repaint();
             }
@@ -426,76 +386,20 @@ public class DtControllerGUI extends JFrame implements ActionListener {
 
         gbc.gridx = 0;
         gbc.gridy = 1;
-        gbc.weightx =0.5;
+        gbc.weightx = 0.5;
         gbc.weighty = 0.5;
-/*        defaultpanel.add(addzip);
-        defaultpanel.add(choosefile);
-        defaultpanel.add(startgenerate);*/
-        generatePanel.setBorder(BorderFactory.createTitledBorder("jee"));
-        addzip.setBorder(BorderFactory.createTitledBorder("jee"));
-        generatePanel.add(addzip,gbc);
-       gbc.gridx = 0;
+        generatePanel.add(addzip, gbc);
+        gbc.gridx = 0;
         gbc.gridy = 2;
         JPanel chooserPanel = new JPanel();
-        chooserPanel.setLayout(new BoxLayout(chooserPanel,BoxLayout.X_AXIS));
-        choosefile.setBorder(BorderFactory.createTitledBorder("jee"));
+        chooserPanel.setLayout(new BoxLayout(chooserPanel, BoxLayout.X_AXIS));
         chooserPanel.add(choosefile);
         chooserPanel.add(chosenfile);
-        generatePanel.add(chooserPanel,gbc);
+        generatePanel.add(chooserPanel, gbc);
         gbc.gridx = 0;
         gbc.gridy = 3;
-        generatePanel.add(startgenerate,gbc);
-        //generatePanel.add(defaultpanel,gbc);
+        generatePanel.add(startgenerate, gbc);
 
-
-    }
-
-    public void initViewDataPanel(){
-        viewDataPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0 ;
-        gbc.anchor = GridBagConstraints.NORTHWEST;
-        JButton cancelBtn = new JButton("Cancel");
-        viewDataPanel.add(cancelBtn,gbc);
-
-        cancelBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                remove(viewDataPanel);
-                add(controlPanel,BorderLayout.CENTER);
-                setButtons();
-                validate();
-                repaint();
-            }
-        });
-
-        JPanel dataPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbcdata = new GridBagConstraints();
-        int y = 0;
-        for(String s:controller.getDevices().get(selected).getDtwin().getDatas().keySet()){
-            gbcdata.gridx = 0;
-            gbcdata.gridy = y++;
-            gbcdata.anchor = GridBagConstraints.NORTHWEST;
-            dataPanel.add(new JLabel(s),gbcdata);
-        }
-        String command ="curl -X GET -u ditto:ditto http://localhost:8080/api/1/things/"+controller.getDevices().get(selected).getDtwin().getNamespace()+":"+controller.getDevices().get(selected).getDtwin().getThingID();
-        System.out.println(command);
-        Map<String,String> displaymap = controller.gethttp(command,controller.getDevices().get(selected).getDtwin().getDatas());
-        y = 0;
-
-        for(String key:displaymap.keySet()){
-            gbcdata.gridx=1;
-            gbcdata.gridy=y++;
-            gbcdata.anchor = GridBagConstraints.NORTHEAST;
-            JLabel value = new JLabel(displaymap.get(key));
-            dataPanel.add(value,gbcdata);
-        }
-
-        gbc.gridx=0;
-        gbc.gridy=1;
-        gbc.anchor=GridBagConstraints.CENTER;
-        viewDataPanel.add(dataPanel,gbc);
 
     }
 
@@ -532,14 +436,14 @@ public class DtControllerGUI extends JFrame implements ActionListener {
                 repaint();
                 break;
             case "view":
-                add(new DataPanel(controller,this,controlPanel),BorderLayout.CENTER);
+                add(new DataPanel(controller, this, controlPanel), BorderLayout.CENTER);
                 remove(controlPanel);
                 validate();
                 repaint();
                 break;
             case "remove":
                 controller.removeDevice(selected);
-                selected=-1;
+                selected = -1;
                 setButtons();
                 validate();
                 repaint();
@@ -569,7 +473,7 @@ public class DtControllerGUI extends JFrame implements ActionListener {
 
         JPanel filesettingsPanel = new JPanel();
 
-        filesettingsPanel.setLayout(new BoxLayout(filesettingsPanel,BoxLayout.X_AXIS));
+        filesettingsPanel.setLayout(new BoxLayout(filesettingsPanel, BoxLayout.X_AXIS));
 
         filesettingsPanel.add(targetdirectory);
         filesettingsPanel.add(targetdirtf);
@@ -578,12 +482,12 @@ public class DtControllerGUI extends JFrame implements ActionListener {
         deployBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                controller.deploy(controller.getDevices().get(getSelected()).getDevname(),targetdirtf.getText());
+                controller.deploy(controller.getDevices().get(getSelected()).getDevname(), targetdirtf.getText());
                 GridBagConstraints gbc = new GridBagConstraints();
-                gbc.gridx=0;
-                gbc.gridy=2;
+                gbc.gridx = 0;
+                gbc.gridy = 2;
                 JButton runBtn = new JButton("Run");
-                deployPanel.add(runBtn,gbc);
+                deployPanel.add(runBtn, gbc);
                 runBtn.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent actionEvent) {
@@ -611,12 +515,12 @@ public class DtControllerGUI extends JFrame implements ActionListener {
             }
         });
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx=0;
-        gbc.gridy=0;
-        deployPanel.add(cancelBtn,gbc);
-        gbc.gridx=0;
-        gbc.gridy=1;
-        deployPanel.add(filesettingsPanel,gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        deployPanel.add(cancelBtn, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        deployPanel.add(filesettingsPanel, gbc);
 
     }
 

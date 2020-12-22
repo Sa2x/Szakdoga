@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 public class DeviceTableModel extends AbstractTableModel {
 
-    public ArrayList<Device> devices ;
+    public ArrayList<Device> devices;
 
-    public DeviceTableModel(ArrayList<Device> _devices){
+    public DeviceTableModel(ArrayList<Device> _devices) {
         devices = new ArrayList<>();
         devices = _devices;
     }
@@ -22,8 +22,8 @@ public class DeviceTableModel extends AbstractTableModel {
     }
 
     @Override
-    public String getColumnName(int column){
-        switch(column){
+    public String getColumnName(int column) {
+        switch (column) {
             case 0:
                 return "Device name";
             case 1:
@@ -37,11 +37,12 @@ public class DeviceTableModel extends AbstractTableModel {
             default:
                 return "Digital Twin State";
         }
-        }
+    }
+
     @Override
     public Object getValueAt(int i, int i1) {
         Device d = devices.get(i);
-        switch(i1){
+        switch (i1) {
             case 0:
                 return d.getDevname();
             case 1:
@@ -51,28 +52,25 @@ public class DeviceTableModel extends AbstractTableModel {
             case 3:
                 return d.getPassword();
             case 4:
-                return  d.getDtwin() == null ? "No Digital Twin":d.getDtwin().getThingID();
+                return d.getDtwin() == null ? "No Digital Twin" : d.getDtwin().getThingID();
             default:
-                return d.getDtwin() == null ? "No digital Twin" : d.getDtwin().isRunning() ? "Running" : "Not running" ;
+                return d.getDtwin() == null ? "No digital Twin" : d.getDtwin().isRunning() ? "Running" : "Not running";
         }
     }
 
-    public boolean addDevice(Device d){
-        System.out.println(devices.size());
-        if(devices.contains(d)){
+    public boolean addDevice(Device d) {
+        if (devices.contains(d)) {
 
-            System.out.println("tartalmaz????");
             return false;
-        }
-        else{
+        } else {
             devices.add(d);
-            System.out.println("jeee im herre");
-            fireTableRowsInserted(devices.size()-1, devices.size()-1);
+            fireTableRowsInserted(devices.size() - 1, devices.size() - 1);
             return true;
         }
     }
+
     @Override
-    public Class<?> getColumnClass(int columnIndex) {//TODO Megkrédezni a sleepeltetést,a specifikaciot,a tábla szebbé tevését,osztálydiagramm és Javadoc hogy a g-hez mit kell irni.
+    public Class<?> getColumnClass(int columnIndex) {
         switch (columnIndex) {
             default:
                 return String.class;
@@ -81,7 +79,6 @@ public class DeviceTableModel extends AbstractTableModel {
 
     public void deleteDevice(int index) {
         devices.remove(index);
-        System.out.println(devices);
-        fireTableRowsDeleted(index,index);
+        fireTableRowsDeleted(index, index);
     }
 }

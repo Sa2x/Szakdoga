@@ -13,7 +13,6 @@ public class DTController {
 
     public DTController() {
         devices = new ArrayList<>();
-        //devices.add(new Device("mock","10.42.0.25","pi","raspberry"));
         try {
             loadDevices();
         } catch (ClassNotFoundException e) {
@@ -64,7 +63,7 @@ public class DTController {
     }
 
     public String checkConnection(int index) {
-        String path = System.getProperty("user.dir")+"/checksshv2.py";
+        String path = System.getProperty("user.dir") + "/checksshv2.py";
         Device d = devices.get(index);
         boolean failed = false;
         try {
@@ -84,13 +83,12 @@ public class DTController {
         return null;
     }
 
-    public ArrayList<Map<String,String>> preprocess(String filepath, int selected) {
-        String path =System.getProperty("user.dir")+"/genFromDSL-preprocess.py";
-        //String path = "genFromDSL-preprocess.py";
+    public ArrayList<Map<String, String>> preprocess(String filepath, int selected) {
+        String path = System.getProperty("user.dir") + "/genFromDSL-preprocess.py";
         Device d = devices.get(selected);
 
-        Map<String,String> datas = new HashMap<>();
-        Map<String,String> functiontodata = new HashMap<>();
+        Map<String, String> datas = new HashMap<>();
+        Map<String, String> functiontodata = new HashMap<>();
         try {
             ProcessBuilder pb = new ProcessBuilder("python3", path, filepath);
             Process p = pb.start();
@@ -103,15 +101,13 @@ public class DTController {
             boolean infomodel = false;
             String ns = "";
             String imodel = "";
-            //String[] functionblocks = new String[];
             String functionblock = "";
             while ((line = bfr.readLine()) != null) {
-                System.out.println(line);
-                if(line.contains("[NAMESPACE]")){
+                if (line.contains("[NAMESPACE]")) {
                     namespace = true;
                     continue;
                 }
-                if(line.contains("[IMODEL]")){
+                if (line.contains("[IMODEL]")) {
                     namespace = false;
                     infomodel = true;
                     continue;
@@ -126,11 +122,11 @@ public class DTController {
                     operations = true;
                     continue;
                 }
-                if(namespace){
+                if (namespace) {
                     ns = line;
                 }
-                if(infomodel){
-                    imodel=line;
+                if (infomodel) {
+                    imodel = line;
                 }
                 if (data) {
 
@@ -138,48 +134,43 @@ public class DTController {
                         functionblock = line.split(" ")[1];
                         continue;
                     }
-                    functiontodata.put(line.split(" ")[0],functionblock);
-                    datas.put(line.split(" ")[0],line.split(" ")[1]);
+                    functiontodata.put(line.split(" ")[0], functionblock);
+                    datas.put(line.split(" ")[0], line.split(" ")[1]);
 
                 }
                 if (operations) {
                 }
 
             }
-            System.out.println("Datas");
-            for(String s: datas.keySet()){
-                System.out.println("Data1 "+s);
-            }
-            d.setDtwin(new DigitalTwin(ns,imodel,datas));
+            d.setDtwin(new DigitalTwin(ns, imodel, datas));
             int code = p.waitFor();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        ArrayList<Map<String, String>> ret= new ArrayList<>();
+        ArrayList<Map<String, String>> ret = new ArrayList<>();
         ret.add(datas);
         ret.add(functiontodata);
         return ret;
     }
 
-    public void generate(ArrayList<String> sendables, int selected, String text){
-        String path = System.getProperty("user.dir")+"/genFromDSL-generate.py";
+    public void generate(ArrayList<String> sendables, int selected, String text) {
+        String path = System.getProperty("user.dir") + "/genFromDSL-generate.py";
 
-        String[] commandlist = {"python3",path};
+        String[] commandlist = {"python3", path};
         Device d = devices.get(selected);
         ArrayList<String> sending = new ArrayList<>();
         sending.add("python3");
         sending.add(path);
         sending.add(d.getDtwin().getThingID());
-        //sending.add(d.getDtwin().getName());
         sending.add(d.getDevname());
         sending.add(d.getDtwin().getNamespace());
         sending.add(text);
-        for(String s:sendables){
+        for (String s : sendables) {
             sending.add(s);
         }
-        ProcessBuilder pb = new ProcessBuilder( sending.toArray(new String[sendables.size()+2]));
+        ProcessBuilder pb = new ProcessBuilder(sending.toArray(new String[sendables.size() + 2]));
         try {
-            Process p = pb.inheritIO().start();
+            Process p = pb.start();
             int code = p.waitFor();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
@@ -188,7 +179,7 @@ public class DTController {
 
     }
 
-    public Map<String, String> gethttp(String command, Map<String,String> data){
+    public Map<String, String> gethttp(String command, Map<String, String> data) {
         String[] properties = data.keySet().toArray(new String[data.size()]);
 
         Map<String, String> returndata = new HashMap<>();
@@ -200,9 +191,8 @@ public class DTController {
             String[] sliced = new String[0];
             ArrayList<String> rows = new ArrayList<>();
             while ((line = bfr.readLine()) != null) {
-                System.out.println(line);
-                sliced= line.split(",");
-                for(String s:sliced){
+                sliced = line.split(",");
+                for (String s : sliced) {
                     rows.add(s);
                 }
             }
@@ -211,11 +201,11 @@ public class DTController {
             rows.remove(0);
             rows.remove(0);
 
-            for(String s:rows){
+            for (String s : rows) {
                 String[] splitted = s.split("\"");
-                for(int i = 0;i<splitted.length;i++){
-                    if(data.containsKey(splitted[i])){
-                        returndata.put(splitted[i],splitted[++i].replace(":","").replace("}",""));
+                for (int i = 0; i < splitted.length; i++) {
+                    if (data.containsKey(splitted[i])) {
+                        returndata.put(splitted[i], splitted[++i].replace(":", "").replace("}", ""));
                     }
                 }
             }
@@ -227,41 +217,24 @@ public class DTController {
         return returndata;
     }
 
-    public void deploy(String devicename,String targetdir){
-        System.out.println(System.getProperty("user.dir"));
-        String command1 = "fab2 transfer --file "+System.getProperty("user.dir")+"/generated/"+devicename+"/DeviceWriter.py --targetdir "+targetdir;
-        //
-        // ;
-        //String command1 = System.getenv("FAB2");
-        System.out.println(command1);
+    public void deploy(String devicename, String targetdir) {
+        String command1 = "fab2 transfer --file " + System.getProperty("user.dir") + "/generated/" + devicename + "/DeviceWriter.py --targetdir " + targetdir;
         ProcessBuilder pb = new ProcessBuilder(command1.split(" "));
-        String command2 = "fab2 transfer --file "+System.getProperty("user.dir")+"/generated/"+devicename+"/Every.xml --targetdir "+targetdir;
+        String command2 = "fab2 transfer --file " + System.getProperty("user.dir") + "/generated/" + devicename + "/Every.xml --targetdir " + targetdir;
         ProcessBuilder pb2 = new ProcessBuilder(command2.split(" "));
-        try{
+        try {
             Process p = pb.start();
-            BufferedReader bfr = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            String line;
-            System.out.println("itt vagyok");
-            while ((line = bfr.readLine()) != null) {
-                System.out.println(line);
-            }
             int code = p.waitFor();
-            System.out.println(code);
             p = pb2.start();
-            bfr = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            while ((line = bfr.readLine()) != null) {
-
-                System.out.println(line);
-            }
             int code1 = p.waitFor();
 
-        }
-        catch (Exception e ){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
 
     }
+
     public ArrayList<Device> getDevices() {
         return devices;
     }
@@ -279,32 +252,28 @@ public class DTController {
     }
 
     public void run(int selected) {
-//        ProcessBuilder pb = new ProcessBuilder("/home/sa2x/anaconda3/bin/fab2","runlocal","--filename",System.getProperty("user.dir")+"/generated/sensepi/AllReader.js");
         Device d = devices.get(selected);
-        ProcessBuilder pb = new ProcessBuilder("node", System.getProperty("user.dir")+"/generated/"+d.getDevname()+"/AllReader.js");
+        ProcessBuilder pb = new ProcessBuilder("node", System.getProperty("user.dir") + "/generated/" + d.getDevname() + "/AllReader.js");
 
-        System.out.println(System.getProperty("user.dir")+"/generated/sensepi/AllReader.js");
-        ProcessBuilder pb1 = new ProcessBuilder("fab2","runremote");
-        try{
-            Process p = pb.inheritIO().start();
+        ProcessBuilder pb1 = new ProcessBuilder("fab2", "runremote");
+        try {
+            Process p = pb.start();
             Process p2 = pb1.start();
             d.getDtwin().setRunning(true);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void stopprocess(int selected) {
         Device d = devices.get(selected);
-        ProcessBuilder pb = new ProcessBuilder("fab2","stoplocal");
-        ProcessBuilder pb1 = new ProcessBuilder("fab2","stopremote");
-        try{
+        ProcessBuilder pb = new ProcessBuilder("fab2", "stoplocal");
+        ProcessBuilder pb1 = new ProcessBuilder("fab2", "stopremote");
+        try {
             Process p = pb.start();
             Process p2 = pb1.start();
             d.getDtwin().setRunning(false);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

@@ -182,10 +182,10 @@ const runsensepi = async (sock) => {
         console.log('Received pressure: ' +pressure)
 
     const updateFeatureMessage = protocolEnvelope(
-        'szakdoga.bme.vik/sense/things/twin/commands/modify',
+        'szakdoga.bme.vik/sense1/things/twin/commands/modify',
                 '/',   
                 {
-                    "thingId":"szakdoga.bme.vik:sense",
+                    "thingId":"szakdoga.bme.vik:sense1",
       "features":{
        "temperatureSensor":{
             "properties":{
