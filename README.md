@@ -35,6 +35,7 @@
 
 **Running**
 - clone the project git clone https://github.com/Sa2x/Szakdoga.git
+- checkout master branch with CLI
 - cd Szakdoga/out/production/Szakdoga
 - java Main
 - Add your Raspberry Pi Device
