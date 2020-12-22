@@ -1,8 +1,8 @@
 from fabric2 import Connection, task
-import sys
+import os
 
 c = Connection(
-    host="10.42.0.24",
+    host="192.168.1.104",
     user="pi",
     connect_kwargs={
         "password": "raspberry",
@@ -24,8 +24,8 @@ def transfer(ctx,file="",targetdir=""):
         print(result)
 
 @task(name="runlocal")
-def runlocal(ctx):
-    ctx.run("node /home/sasa/data1/TDKCaseStudy/DigitalTwinController/generated/sensepi/AllReader.js")
+def runlocal(ctx,filename=""):
+    ctx.run("node "+filename)
 
 @task(name="stoplocal")
 def stoplocal(ctx):

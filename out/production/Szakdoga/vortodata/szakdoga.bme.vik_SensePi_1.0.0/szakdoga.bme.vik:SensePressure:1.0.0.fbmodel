@@ -1,0 +1,12 @@
+vortolang 1.0
+namespace szakdoga.bme.vik
+version 1.0.0
+displayname "SensePressure"
+description "Functionblock for SensePressure"
+
+functionblock SensePressure {
+    status{
+        pressure as float
+    }
+
+}

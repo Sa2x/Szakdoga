@@ -51,7 +51,7 @@ public class DataPanel extends JPanel{
             gbcdata.anchor = GridBagConstraints.NORTHWEST;
             dataPanel.add(new JLabel(s),gbcdata);
         }
-        String command ="curl -X GET -u ditto:ditto http://localhost:8080/api/1/things/szakdoga.bme.vik:sensepi";
+        String command ="curl -X GET -u ditto:ditto http://localhost:8080/api/1/things/"+controller.getDevices().get(frame.getSelected()).getDtwin().getNamespace()+":"+controller.getDevices().get(frame.getSelected()).getDtwin().getThingID();
 
         Map<String,String> displaymap = controller.gethttp(command,controller.getDevices().get(frame.getSelected()).getDtwin().getDatas());
         y = 0;
@@ -80,7 +80,7 @@ public class DataPanel extends JPanel{
     }
 
     public void refreshPanel(){
-        Map<String, String> display = controller.gethttp("curl -X GET -u ditto:ditto http://localhost:8080/api/1/things/szakdoga.bme.vik:sensepii",controller.getDevices().get(frame.getSelected()).getDtwin().getDatas());
+        Map<String, String> display = controller.gethttp("curl -X GET -u ditto:ditto http://localhost:8080/api/1/things/"+controller.getDevices().get(frame.getSelected()).getDtwin().getNamespace()+":"+controller.getDevices().get(frame.getSelected()).getDtwin().getThingID(),controller.getDevices().get(frame.getSelected()).getDtwin().getDatas());
         int index=0;
         for(String s:display.keySet()){
             displayvalues.get(index).setText(display.get(s));

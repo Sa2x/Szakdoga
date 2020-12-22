@@ -64,7 +64,43 @@ public class DtControllerGUI extends JFrame implements ActionListener {
             }
         });
     }
+    public void setButtons(){
+        if(selected == -1) {
+            addButton.setEnabled(true);
+            removeButton.setEnabled(false);
+            viewDataButton.setEnabled(false);
+            generateButton.setEnabled(false);
+            checkSSHCOnnection.setEnabled(false);
+            deployButton.setEnabled(false);
+            stopButton.setEnabled(false);
+        }
+        else if(controller.getDevices().get(selected).getDtwin() == null){
+            addButton.setEnabled(false);
+            removeButton.setEnabled(true);
+            viewDataButton.setEnabled(false);
+            generateButton.setEnabled(true);
+            checkSSHCOnnection.setEnabled(true);
+            deployButton.setEnabled(false);
+            stopButton.setEnabled(false);
+        }
+        else {
+            addButton.setEnabled(false);
+            removeButton.setEnabled(true);
+            generateButton.setEnabled(false);
+            checkSSHCOnnection.setEnabled(true);
+            if(!controller.getDevices().get(selected).getDtwin().isRunning()){
+                viewDataButton.setEnabled(false);
+                deployButton.setEnabled(true);
+                stopButton.setEnabled(false);
+            }
+            else{
+                viewDataButton.setEnabled(true);
+                deployButton.setEnabled(false);
+                stopButton.setEnabled(true);
+            }
 
+        }
+    }
     public void initControlPanel() {
         controlPanel = new JPanel();
         addButton = new JButton("Add device");
@@ -75,12 +111,8 @@ public class DtControllerGUI extends JFrame implements ActionListener {
         deployButton = new JButton("Deploy DT ");
         stopButton = new JButton("Stop running");
 
-        removeButton.setEnabled(false);
-        viewDataButton.setEnabled(false);
-        generateButton.setEnabled(false);
-        checkSSHCOnnection.setEnabled(false);
-        //deployButton.setEnabled(false);
 
+        setButtons();
         addButton.addActionListener(this);
         addButton.setActionCommand("addbutton");
         removeButton.addActionListener(this);
@@ -114,7 +146,7 @@ public class DtControllerGUI extends JFrame implements ActionListener {
         devicePanel = new JPanel();
         table = new JTable(controller.getTableModel());
         JScrollPane tablepane = new JScrollPane(table);
-
+        selected=-1;
 /*        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent listSelectionEvent) {
@@ -130,11 +162,12 @@ public class DtControllerGUI extends JFrame implements ActionListener {
                 int row = table.rowAtPoint(evt.getPoint());
                 int col = table.columnAtPoint(evt.getPoint());
                 if (row >= 0) {
-                    removeButton.setEnabled(true);
+/*                    removeButton.setEnabled(true);
                     //viewDataButton.setEnabled(true);
                     generateButton.setEnabled(true);
-                    checkSSHCOnnection.setEnabled(true);
+                    checkSSHCOnnection.setEnabled(true);*/
                     selected = row;
+                    setButtons();
                     System.out.println(selected);
                 }
             }
@@ -147,12 +180,13 @@ public class DtControllerGUI extends JFrame implements ActionListener {
                 System.out.println(row);
                 if (row < 0) {
                     table.clearSelection();
-                    removeButton.setEnabled(false);
+/*                    removeButton.setEnabled(false);
                     viewDataButton.setEnabled(false);
                     generateButton.setEnabled(false);
                     checkSSHCOnnection.setEnabled(false);
-                    deployButton.setEnabled(false);
+                    deployButton.setEnabled(false);*/
                     selected = -1;
+                    setButtons();
                     System.out.println(selected);
                 }
 
@@ -201,6 +235,7 @@ public class DtControllerGUI extends JFrame implements ActionListener {
                         controller.addDevice(new Device(nametf.getText(), iptf.getText(), hosttf.getText(), passtf.getText()));
                         frame.remove(addPanel);
                         frame.add(controlPanel);
+                        setButtons();
                         validate();
                         repaint();
                     } else {
@@ -247,6 +282,7 @@ public class DtControllerGUI extends JFrame implements ActionListener {
             public void actionPerformed(ActionEvent actionEvent) {
                 add(controlPanel, BorderLayout.CENTER);
                 remove(generatePanel);
+                setButtons();
                 validate();
                 repaint();
 
@@ -271,7 +307,6 @@ public class DtControllerGUI extends JFrame implements ActionListener {
 
                     filepath = chooser.getSelectedFile().getAbsolutePath();
                     chosenfile.setText(chooser.getSelectedFile().toString());
-                    System.out.println(filepath);
                     //filepath="/home/sasa/data1/TDKCaseStudy/com.incquery_MeArm_1.0.0.zip";
                     startgenerate.setEnabled(true);
                 }
@@ -376,6 +411,7 @@ public class DtControllerGUI extends JFrame implements ActionListener {
                         controller.generate(sendables,selected,dirtf.getText());
                         add(controlPanel, BorderLayout.CENTER);
                         remove(generatePanel);
+                        setButtons();
                         validate();
                         repaint();
                         deployButton.setEnabled(true);
@@ -428,7 +464,7 @@ public class DtControllerGUI extends JFrame implements ActionListener {
             public void actionPerformed(ActionEvent actionEvent) {
                 remove(viewDataPanel);
                 add(controlPanel,BorderLayout.CENTER);
-
+                setButtons();
                 validate();
                 repaint();
             }
@@ -496,7 +532,6 @@ public class DtControllerGUI extends JFrame implements ActionListener {
                 repaint();
                 break;
             case "view":
-
                 add(new DataPanel(controller,this,controlPanel),BorderLayout.CENTER);
                 remove(controlPanel);
                 validate();
@@ -504,6 +539,8 @@ public class DtControllerGUI extends JFrame implements ActionListener {
                 break;
             case "remove":
                 controller.removeDevice(selected);
+                selected=-1;
+                setButtons();
                 validate();
                 repaint();
                 break;
@@ -515,7 +552,10 @@ public class DtControllerGUI extends JFrame implements ActionListener {
                 repaint();
                 break;
             case "stoprunning":
-                controller.stopprocess();
+                controller.stopprocess(selected);
+                setButtons();
+                validate();
+                repaint();
         }
     }
 
@@ -547,9 +587,10 @@ public class DtControllerGUI extends JFrame implements ActionListener {
                 runBtn.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent actionEvent) {
-                        controller.run();
+                        controller.run(selected);
                         frame.remove(deployPanel);
                         frame.add(controlPanel);
+                        setButtons();
                         repaint();
                         revalidate();
                     }
@@ -564,6 +605,7 @@ public class DtControllerGUI extends JFrame implements ActionListener {
             public void actionPerformed(ActionEvent actionEvent) {
                 frame.remove(deployPanel);
                 frame.add(controlPanel);
+                setButtons();
                 repaint();
                 revalidate();
             }

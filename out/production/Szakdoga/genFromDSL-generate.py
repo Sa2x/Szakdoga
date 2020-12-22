@@ -463,7 +463,8 @@ def generate():
     namespace = data[3]
     thingid = data[1]
     targetdir = data[4]
-
+    print("Thing id: "+thingid)
+    print("Device name: "+name)
     functiontodata = {}
 
     del (data[0])

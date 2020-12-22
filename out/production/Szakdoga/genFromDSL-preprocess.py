@@ -7,13 +7,23 @@ import shutil
 
 def ziprocess(filename):
     currentdir = os.getcwd()
+    print(currentdir)
+    #filename = filename.split('/')[-1]
     # print("/home/sasa/data1/TDKCaseStudy/com.incquery_MeArm_1.0.0.zip")
+    print("file vagyok"+filename)
     with zipfile.ZipFile(filename, 'r') as zip:
+        print("meg tudomnyitni ")
+        filename = filename.split('/')[-1]
         if not os.path.exists('vortodata'):
             os.mkdir('vortodata')
+            print("1.")
+            print(os.path)
         if not os.path.exists('vortodata/' + filename.rstrip('.zip')):
             os.mkdir('vortodata/' + filename.rstrip('.zip'))
+            print("2.")
         if (len(os.listdir(currentdir + '/vortodata/' + filename.rstrip('.zip'))) == 0):
+            print("hallloooo")
+            print("3.")
             zip.extractall(currentdir + '/vortodata/' + filename.rstrip('.zip'))
     return currentdir + '/vortodata/' + filename.rstrip('.zip')
 
@@ -155,6 +165,7 @@ def processfunctionblocks(fileaccess, funcbdict, ns, imodel):
 
 def prepocess():
     for s in sys.argv:
+        print("Argumentumok:")
         print(s)
     if (len(sys.argv) > 1):
         print("hallo")
@@ -165,15 +176,16 @@ def prepocess():
         # os.rename(path,os.getcwd()+'/'+file)
     if len(sys.argv) < 2:
         print("Zip file is missing")
-    elif not zipfile.is_zipfile(file):
+    elif not zipfile.is_zipfile(path):
         print("Given file's format is not zip")
     else:
-
-        fileaccess = ziprocess(file)
-
-    for filename in os.listdir(fileaccess):
-        if (filename.endswith(".infomodel")):
-            processinfomodel(fileaccess, filename)
+        print("nem jutok el idaig")
+        fileaccess = ziprocess(path)
+        print("fileaccess vagyok:"+fileaccess)
+        for filename in os.listdir(fileaccess):
+            print("filanem vagyok:"+filename)
+            if (filename.endswith(".infomodel")):
+                processinfomodel(fileaccess, filename)
 
 
 prepocess()

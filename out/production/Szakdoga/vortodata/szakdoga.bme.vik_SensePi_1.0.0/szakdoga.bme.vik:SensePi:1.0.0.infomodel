@@ -1,0 +1,18 @@
+vortolang 1.0
+namespace szakdoga.bme.vik
+version 1.0.0
+displayname "SensePi"
+description "Information Model for SensiPi"
+
+using szakdoga.bme.vik.SenseTemp; 1.0.0
+using szakdoga.bme.vik.SensePressure; 1.0.0
+using szakdoga.bme.vik.SenseHumidity; 1.0.0
+	
+infomodel SensePi {
+
+	functionblocks {
+	    temperatureSensor as SenseTemp
+	    pressureSensor as SensePressure
+	    humiditySensor as SenseHumidity
+	}
+}
